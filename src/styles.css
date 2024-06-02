@@ -21,6 +21,9 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary {
   background-color:rgb(214, 27, 27) ;       
 }
+.close{
+    background-color: rgb(226, 62, 12);
+}
 .container-fluid{
     background-color: rgb(6, 135, 240);
 

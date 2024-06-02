@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Product } from './product';
 import { environment } from '../environments/environment.development';
 
@@ -13,18 +13,27 @@ private apiServerUrl=environment.apiBaseUrl;
 constructor(private http:HttpClient) { }
 
   public getProducts():Observable<Product[]>{
-    console.log("api url", `${this.apiServerUrl}/api/products/all`);
-   return this.http.get<Product[]> (`${this.apiServerUrl}/api/products/all`);
+    console.log("api url", `${this.apiServerUrl}/api/products`);
+   return this.http.get<Product[]> (`${this.apiServerUrl}/api/products`)
+   /* .pipe(
+    map(products=>products.map(product=>({
+      ...product,
+      name:product.name.toUpperCase()
+    })))
+   ) */
 
    
 }
 public addProduct(product:Product):Observable<Product>{
-  return this.http.post<Product> (`${this.apiServerUrl}/api/products/add`,product);
+  console.log("api add", `${this.apiServerUrl}/api/products`);
+  return this.http.post<Product> (`${this.apiServerUrl}/api/products`,product);
 
 
 }
 public updateProduct(product:Product):Observable<Product>{
-  return this.http.put<Product> (`${this.apiServerUrl}/api/products/update`,product);
+  console.log("api up", `${this.apiServerUrl}/api/products`);
+ /*  let productId = product.id; */
+  return this.http.put<Product> (`${this.apiServerUrl}/api/products/${product.id}`,product);
 
 
 }

@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Product } from './product';
 import { ProductService } from './product.service';
@@ -6,11 +6,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgForm } from '@angular/forms';
-
-
-
-
-
 
 @Component({
   selector: 'app-root',
@@ -20,9 +15,22 @@ import { NgForm } from '@angular/forms';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit{
+  gh=true
+ /*  addForm = {
+    id: 0,
+    name: '',
+    brand: '',
+    description: '',
+    price: '',
+    category: '',
+    imageUrl: ''
+  }; */
+ 
 
-
-  public products: Product[] | undefined ;
+  editProduct: Product | any;
+  products: Product[] | any ;
+  deleteProduct:Product| any
+  regArray:any={}
 constructor(private productService:ProductService) { }
 
 ngOnInit(): void {
@@ -38,53 +46,34 @@ public getProducts():void{
     alert(error.message);
   }
   );
+  console.table(this.products)
 } 
-//public getProducts():void{
- // this.productService.getProducts().subscribe(
-  // {
-   /// next:response=>console.log(response),
-  //  error:error=>console.log(error)
-  // }
-  //);
- 
-///}
+
+
 public onAddProduct(addForm: NgForm): void {
-  const addProductFormButton = document.getElementById("add-product-form");
-if (addProductFormButton) {
-    addProductFormButton.click();
-  this.productService.addProduct(addForm.value).subscribe({
-    next : response=>{
-      this.getProducts();
-      addForm.reset();
-    }
+  if (addForm.valid) {
+    this.productService.addProduct(addForm.value).subscribe({
+      next: response => {
+        this.getProducts();
+        addForm.reset();
+      },
+      error: (error: HttpErrorResponse) => {
+        alert(error.message);
+      }
+    });
   }
-    
-    /* (response: Product) => {
-      
-      console.log(response);
-      this.getProducts();
-      addForm.reset();
-    },
-    (error: HttpErrorResponse) => {
-      alert(error.message);
-      addForm.reset();
-    } */
-  );
 }
-}
-
 public onUpdateProduct(product: Product): void {
-  this.productService.updateProduct(product).subscribe(
-    (response: Product) => {
-      console.log(response);
-      this.getProducts();
-    },
-    (error: HttpErrorResponse) => {
-      alert(error.message);
-    }
-  );
+    this.productService.updateProduct(product).subscribe({
+      next: (response: Product) => {
+        console.log(response);
+        this.getProducts();
+      },
+      error: (error: HttpErrorResponse) => {
+        alert(error.message);
+      }
+    });
 }
-
 public onDeleteProduct(productId: number): void {
   this.productService.deleteProduct(productId).subscribe(
     (response: void) => {
@@ -97,7 +86,8 @@ public onDeleteProduct(productId: number): void {
   );
 }
 
-public onOpenModal(_product: Product| null, mode: string): void {
+public onOpenModal(product: Product| null, mode: string): void {
+  console.log("mode", mode)
   const container = document.getElementById('main-container');
   const button = document.createElement('button');
   button.type = 'button';
@@ -107,11 +97,12 @@ public onOpenModal(_product: Product| null, mode: string): void {
     button.setAttribute('data-target', '#addProductModal');
   }
   if (mode === 'edit') {
-    
+    this.editProduct =product;
+    console.log("product", product)
     button.setAttribute('data-target', '#updateProductModal');
   }
   if (mode === 'delete') {
-    
+    this.deleteProduct=product
     button.setAttribute('data-target', '#deleteProductModal');
   }
   if (container) {
@@ -125,7 +116,5 @@ public onOpenModal(_product: Product| null, mode: string): void {
 
  
 
-function next(value: Product): void {
-  throw new Error('Function not implemented.');
-}
+
 
